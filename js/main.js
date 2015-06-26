@@ -47,7 +47,7 @@ pilo.color = 'aqua';
 pilo.pos = Object();
 pilo.pos.x = 20;
 pilo.pos.y = 20;
-pilo.speed = 200;
+pilo.speed = 50;
 pilo.moveVec = genRandMoveVector();
 showPilo();
 autoMovePilo();
@@ -87,6 +87,7 @@ function autoMovePilo() {
     autoMovePilo();
   }, (pilo.speed * pilo.moveVec.distance));
 }
+
 /******************************************************************************
   name: showPilo()
   description: display pilo based on position.
