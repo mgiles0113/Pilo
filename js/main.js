@@ -44,11 +44,19 @@ player.pos.y = 0;
 // pilo settings
 pilo.size = 5;
 pilo.color = 'aqua';
-pilo.pos = {};
-pilo.pos.x = 20;
-pilo.pos.y = 20;
+pilo.length = 10;
+pilo.body = [];
+pilo.body[0] = {};
+pilo.body[0].x = 20;
+pilo.body[0].y = 20;
+for (var i = 1; i < pilo.length; i++) {
+  pilo.body[i] = {};
+}
+
 pilo.speed = 50;
 pilo.moveVec = genRandMoveVector();
+
+console.log(pilo.body.length);
 
 /******************************************************************************
  *                                   PILO                                     *
@@ -73,7 +81,6 @@ pilo.moveVec = genRandMoveVector();
 ******************************************************************************/
 function autoMovePilo() {
   pilo.moveVec = genRandMoveVector();
-  console.log(pilo.moveVec.distance);
   pilo.autoMove = setInterval(function () {
     movePilo(pilo.moveVec.direction);
   }, pilo.speed);
@@ -89,19 +96,33 @@ function autoMovePilo() {
   parameters: none
 ******************************************************************************/
 function showPilo() {
-  var style;
-  style = 'background-color: ' + pilo.color + ';';
-  style += 'display: inline-block;';
-  style += 'position: absolute;';
-  style += 'width: ' + pilo.size + 'px;';
-  style += 'height: ' + pilo.size + 'px;';
-  style += 'margin-left: ' + pilo.pos.x + 'px;';
-  style += 'margin-top: ' + pilo.pos.y + 'px;';
-  style += 'border-radius: 50%;';
-  pilo.div = document.createElement('div');
-  pilo.div.setAttribute('id', 'pilo');
-  pilo.div.style.cssText = style;
-  document.getElementById('gameBoard').appendChild(pilo.div);
+  var style,
+    i;
+  
+  for (i = 0; i < pilo.length; i++) {
+    if (i === 0) {
+      style = 'background-color: ' + 'green' + ';';  
+    }
+    else {
+      style = 'background-color: ' + pilo.color + ';';
+    }
+    style = 'background-color: ' + pilo.color + ';';
+    style += 'display: inline-block;';
+    style += 'position: absolute;';
+    style += 'width: ' + pilo.size + 'px;';
+    style += 'height: ' + pilo.size + 'px;';
+    style += 'margin-left: ' + pilo.body[i].x + 'px;';
+    style += 'margin-top: ' + pilo.body[i].y + 'px;';
+    style += 'border-radius: 50%;';
+    pilo.div = document.createElement('div');
+    if (i === 0) {
+      pilo.div.setAttribute('id', 'pilo');
+    } else {
+      pilo.div.setAttribute('id', 'pilo' + i);
+    }
+    pilo.div.style.cssText = style;
+    document.getElementById('gameBoard').appendChild(pilo.div);
+  }
 }
 
 /******************************************************************************
@@ -110,7 +131,15 @@ function showPilo() {
   parameters: none
 ******************************************************************************/
 function removePilo() {
-  document.getElementById('pilo').remove();
+  var i;
+  for (i = 0; i < pilo.length; i++) {
+    if (i === 0) {
+      document.getElementById('pilo').remove();
+    } else {
+      document.getElementById('pilo' + i).remove();
+    }
+    
+  }
 }
 
 /****************************************************************************** 
@@ -120,50 +149,66 @@ function removePilo() {
     d - direction that will be translated to changes in position x and y.
 ******************************************************************************/
 function movePilo(d) {
-  if (d === 'dr') {
-    if (pilo.pos.x < (gameBoard.size - pilo.size)) {
-      pilo.pos.x += pilo.size;
+  var tempPos1,
+      tempPos2,
+      tempPos3,
+      tempPos4,
+      i;
+  tempPos1 = pilo.body[0].x;
+  tempPos2 = pilo.body[0].y;
+  
+  if (d === 'dr') {  
+    if (pilo.body[0].x < (gameBoard.size - pilo.size)) {
+      pilo.body[0].x += pilo.size;
     }
-    if (pilo.pos.y < (gameBoard.size - pilo.size)) {
-      pilo.pos.y += pilo.size;
+    if (pilo.body[0].y < (gameBoard.size - pilo.size)) {
+      pilo.body[0].y += pilo.size;
     }
   } else if (d === 'ur') {
-    if (pilo.pos.x < (gameBoard.size - pilo.size)) {
-      pilo.pos.x += pilo.size;
+    if (pilo.body[0].x < (gameBoard.size - pilo.size)) {
+      pilo.body[0].x += pilo.size;
     }
-    if (pilo.pos.y >= pilo.size) {
-      pilo.pos.y -= pilo.size;
+    if (pilo.body[0].y >= pilo.size) {      
+      pilo.body[0].y -= pilo.size;
     }
   } else if (d === 'dl') {
-    if (pilo.pos.y < (gameBoard.size - pilo.size)) {
-      pilo.pos.y += pilo.size;
+    if (pilo.body[0].y < (gameBoard.size - pilo.size)) {
+      pilo.body[0].y += pilo.size;
     }
-    if (pilo.pos.x >= pilo.size) {
-      pilo.pos.x -= pilo.size;
+    if (pilo.body[0].x >= pilo.size) {
+      pilo.body[0].x -= pilo.size;
     }
   } else if (d === 'ul') {
-    if (pilo.pos.x >= pilo.size) {
-      pilo.pos.x -= pilo.size;
+    if (pilo.body[0].x >= pilo.size) {
+      pilo.body[0].x -= pilo.size;
     }
-    if (pilo.pos.y >= pilo.size) {
-      pilo.pos.y -= pilo.size;
+    if (pilo.body[0].y >= pilo.size) {
+      pilo.body[0].y -= pilo.size;
     }
   } else if (d === 'l') {
-    if (pilo.pos.x >= pilo.size) {
-      pilo.pos.x -= pilo.size;
+    if (pilo.body[0].x >= pilo.size) {
+      pilo.body[0].x -= pilo.size;
     }
   } else if (d === 'u') {
-    if (pilo.pos.y >= pilo.size) {
-      pilo.pos.y -= pilo.size;
+    if (pilo.body[0].y >= pilo.size) {
+      pilo.body[0].y -= pilo.size;
     }
   } else if (d === 'r') {
-    if (pilo.pos.x < (gameBoard.size - pilo.size)) {
-      pilo.pos.x += pilo.size;
+    if (pilo.body[0].x < (gameBoard.size - pilo.size)) {
+      pilo.body[0].x += pilo.size;
     }
   } else if (d === 'd') {
-    if (pilo.pos.y < (gameBoard.size - pilo.size)) {
-      pilo.pos.y += pilo.size;
+    if (pilo.body[0].y < (gameBoard.size - pilo.size)) {
+      pilo.body[0].y += pilo.size;
     }
+  }
+  for (i = 1; i < pilo.length; i++) {
+    tempPos3 = pilo.body[i].x;
+    tempPos4 = pilo.body[i].y;
+    pilo.body[i].x = tempPos1;
+    pilo.body[i].y = tempPos2;
+    tempPos1 = tempPos3;
+    tempPos2 = tempPos4;
   }
   // remove player from current position
   removePilo();
