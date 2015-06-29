@@ -9,7 +9,7 @@
   
 </head>
 <body>
-
+  <p id="score">10</p>
 </body>
   <script src="js/main.js"></script>
 </html>

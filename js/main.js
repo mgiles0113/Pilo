@@ -19,7 +19,9 @@
 var gameBoard = {},
   player = {},
   pilo = {},
-  keys = [];
+  keys = [],
+  objectSize = 5;
+
 
 // gameboard settings
 gameBoard.size = 900;
@@ -30,6 +32,14 @@ gameBoard.style += '; width: ' + gameBoard.size + 'px';
 gameBoard.style += '; height:' + gameBoard.size + 'px';
 gameBoard.style += '; margin: auto;';
 gameBoard.style += '; border-radius: 2.5px;';
+gameBoard.grass = new Array(gameBoard.size / objectSize);
+for (var i = 0; i < gameBoard.size / objectSize; i++) {
+  gameBoard.grass[i] = new Array(gameBoard.size / objectSize);
+  for (var j = 0; j < gameBoard.size / objectSize; j++) {
+    gameBoard.grass[i][j] = 0;
+  }
+}
+gameBoard.grasscount = 0;
 gameBoard.div.setAttribute('id', 'gameBoard');
 gameBoard.div.style.cssText = gameBoard.style;
 // place game board
@@ -47,16 +57,15 @@ pilo.color = 'aqua';
 pilo.length = 10;
 pilo.body = [];
 pilo.body[0] = {};
-pilo.body[0].x = 20;
-pilo.body[0].y = 20;
+pilo.body[0].x = 3;
+pilo.body[0].y = 3;
 for (var i = 1; i < pilo.length; i++) {
   pilo.body[i] = {};
+  pilo.body[i].x = 3;
+  pilo.body[i].y = 3;
 }
-
 pilo.speed = 50;
 pilo.moveVec = genRandMoveVector();
-
-console.log(pilo.body.length);
 
 /******************************************************************************
  *                                   PILO                                     *
@@ -96,31 +105,26 @@ function autoMovePilo() {
   parameters: none
 ******************************************************************************/
 function showPilo() {
-  var style,
+  var piloStyle,
     i;
   
   for (i = 0; i < pilo.length; i++) {
-    if (i === 0) {
-      style = 'background-color: ' + 'green' + ';';  
-    }
-    else {
-      style = 'background-color: ' + pilo.color + ';';
-    }
-    style = 'background-color: ' + pilo.color + ';';
-    style += 'display: inline-block;';
-    style += 'position: absolute;';
-    style += 'width: ' + pilo.size + 'px;';
-    style += 'height: ' + pilo.size + 'px;';
-    style += 'margin-left: ' + pilo.body[i].x + 'px;';
-    style += 'margin-top: ' + pilo.body[i].y + 'px;';
-    style += 'border-radius: 50%;';
+    piloStyle = 'background-color: ' + pilo.color + ';';
+    piloStyle = 'background-color: ' + pilo.color + ';';
+    piloStyle += 'display: inline-block;';
+    piloStyle += 'position: absolute;';
+    piloStyle += 'width: ' + pilo.size + 'px;';
+    piloStyle += 'height: ' + pilo.size + 'px;';
+    piloStyle += 'margin-left: ' + (pilo.body[i].x * player.size) + 'px;';
+    piloStyle += 'margin-top: ' + (pilo.body[i].y * player.size) + 'px;';
+    piloStyle += 'border-radius: 50%;';
     pilo.div = document.createElement('div');
     if (i === 0) {
       pilo.div.setAttribute('id', 'pilo');
     } else {
       pilo.div.setAttribute('id', 'pilo' + i);
     }
-    pilo.div.style.cssText = style;
+    pilo.div.style.cssText = piloStyle;
     document.getElementById('gameBoard').appendChild(pilo.div);
   }
 }
@@ -157,49 +161,49 @@ function movePilo(d) {
   tempPos1 = pilo.body[0].x;
   tempPos2 = pilo.body[0].y;
   
-  if (d === 'dr') {  
-    if (pilo.body[0].x < (gameBoard.size - pilo.size)) {
-      pilo.body[0].x += pilo.size;
+  if (d === 'dr') {
+    if (pilo.body[0].x < gameBoard.size / pilo.size - 1) {
+      pilo.body[0].x += 1;
     }
-    if (pilo.body[0].y < (gameBoard.size - pilo.size)) {
-      pilo.body[0].y += pilo.size;
+    if (pilo.body[0].y < gameBoard.size / pilo.size - 1) {
+      pilo.body[0].y += 1;
     }
   } else if (d === 'ur') {
-    if (pilo.body[0].x < (gameBoard.size - pilo.size)) {
-      pilo.body[0].x += pilo.size;
+    if (pilo.body[0].x < gameBoard.size / pilo.size - 1) {
+      pilo.body[0].x += 1;
     }
-    if (pilo.body[0].y >= pilo.size) {      
-      pilo.body[0].y -= pilo.size;
+    if (pilo.body[0].y >= 1) {      
+      pilo.body[0].y -= 1;
     }
   } else if (d === 'dl') {
-    if (pilo.body[0].y < (gameBoard.size - pilo.size)) {
-      pilo.body[0].y += pilo.size;
+    if (pilo.body[0].y < gameBoard.size / pilo.size - 1) {
+      pilo.body[0].y += 1;
     }
-    if (pilo.body[0].x >= pilo.size) {
-      pilo.body[0].x -= pilo.size;
+    if (pilo.body[0].x >= 1) {
+      pilo.body[0].x -= 1;
     }
   } else if (d === 'ul') {
-    if (pilo.body[0].x >= pilo.size) {
-      pilo.body[0].x -= pilo.size;
+    if (pilo.body[0].x >= 1) {
+      pilo.body[0].x -= 1;
     }
-    if (pilo.body[0].y >= pilo.size) {
-      pilo.body[0].y -= pilo.size;
+    if (pilo.body[0].y >= 1) {
+      pilo.body[0].y -= 1;
     }
   } else if (d === 'l') {
-    if (pilo.body[0].x >= pilo.size) {
-      pilo.body[0].x -= pilo.size;
+    if (pilo.body[0].x >= 1) {
+      pilo.body[0].x -= 1;
     }
   } else if (d === 'u') {
-    if (pilo.body[0].y >= pilo.size) {
-      pilo.body[0].y -= pilo.size;
+    if (pilo.body[0].y >= 1) {
+      pilo.body[0].y -= 1;
     }
   } else if (d === 'r') {
-    if (pilo.body[0].x < (gameBoard.size - pilo.size)) {
-      pilo.body[0].x += pilo.size;
+    if (pilo.body[0].x < gameBoard.size / pilo.size - 1) {
+      pilo.body[0].x += 1;
     }
   } else if (d === 'd') {
-    if (pilo.body[0].y < (gameBoard.size - pilo.size)) {
-      pilo.body[0].y += pilo.size;
+    if (pilo.body[0].y < gameBoard.size / pilo.size - 1) {
+      pilo.body[0].y += 1;
     }
   }
   for (i = 1; i < pilo.length; i++) {
@@ -210,8 +214,12 @@ function movePilo(d) {
     tempPos1 = tempPos3;
     tempPos2 = tempPos4;
   }
+  
   // remove player from current position
   removePilo();
+  if (gameBoard.grass[pilo.body[0].x][pilo.body[0].y] === 1) {
+    eatGrass(pilo.body[0].x, pilo.body[0].y);
+  }
   // add player in new position
   showPilo();
 }
@@ -289,8 +297,8 @@ function showPlayer() {
   style += 'position: absolute;';
   style += 'width: ' + player.size + 'px;';
   style += 'height: ' + player.size + 'px;';
-  style += 'margin-left: ' + player.pos.x + 'px;';
-  style += 'margin-top: ' + player.pos.y + 'px;';
+  style += 'margin-left: ' + (player.pos.x * player.size) + 'px;';
+  style += 'margin-top: ' + (player.pos.y * player.size) + 'px;';
   style += 'border-radius: 50%;';
   player.div = document.createElement('div');
   player.div.setAttribute('id', 'player');
@@ -315,48 +323,48 @@ function removePlayer() {
 ******************************************************************************/
 function movePlayer(d) {
   if (d === 'dr') {
-    if (player.pos.x < (gameBoard.size - player.size)) {
-      player.pos.x += player.size;
+    if (player.pos.x < gameBoard.size / player.size - 1) {
+      player.pos.x += 1;
     }
-    if (player.pos.y < (gameBoard.size - player.size)) {
-      player.pos.y += player.size;
+    if (player.pos.y < gameBoard.size / player.size - 1) {
+      player.pos.y += 1;
     }
   } else if (d === 'ur') {
-    if (player.pos.x < (gameBoard.size - player.size)) {
-      player.pos.x += player.size;
+    if (player.pos.x < gameBoard.size / player.size - 1) {
+      player.pos.x += 1;
     }
-    if (player.pos.y >= player.size) {
-      player.pos.y -= player.size;
+    if (player.pos.y >= 1) {
+      player.pos.y -= 1;
     }
   } else if (d === 'dl') {
-    if (player.pos.y < (gameBoard.size - player.size)) {
-      player.pos.y += player.size;
+    if (player.pos.y < gameBoard.size / player.size - 1) {
+      player.pos.y += 1;
     }
-    if (player.pos.x >= player.size) {
-      player.pos.x -= player.size;
+    if (player.pos.x >= 1) {
+      player.pos.x -= 1;
     }
   } else if (d === 'ul') {
-    if (player.pos.x >= player.size) {
-      player.pos.x -= player.size;
+    if (player.pos.x >= 1) {
+      player.pos.x -= 1;
     }
-    if (player.pos.y >= player.size) {
-      player.pos.y -= player.size;
+    if (player.pos.y >= 1) {
+      player.pos.y -= 1;
     }
   } else if (d === 'l') {
-    if (player.pos.x >= player.size) {
-      player.pos.x -= player.size;
+    if (player.pos.x >= 1) {
+      player.pos.x -= 1;
     }
   } else if (d === 'u') {
-    if (player.pos.y >= player.size) {
-      player.pos.y -= player.size;
+    if (player.pos.y >= 1) {
+      player.pos.y -= 1;
     }
   } else if (d === 'r') {
-    if (player.pos.x < (gameBoard.size - player.size)) {
-      player.pos.x += player.size;
+    if (player.pos.x < gameBoard.size / player.size - 1) {
+      player.pos.x += 1;
     }
   } else if (d === 'd') {
-    if (player.pos.y < (gameBoard.size - player.size)) {
-      player.pos.y += player.size;
+    if (player.pos.y < gameBoard.size / player.size - 1) {
+      player.pos.y += 1;
     }
   }
   // remove player from current position
@@ -385,7 +393,7 @@ function movePlayer(d) {
 function genRandMoveVector() {
   var randMoveVector = {};
   randMoveVector.direction = Math.floor((Math.random() * 8) + 1);
-  randMoveVector.distance = Math.floor((Math.random() * 30) + 1);
+  randMoveVector.distance = Math.floor((Math.random() * ((gameBoard.size / 5) / 2)) + 1);
   
   if (randMoveVector.direction === 1) {
     randMoveVector.direction = 'ul';
@@ -413,3 +421,39 @@ showPlayer();
 showPilo();
 // start pilo movement
 autoMovePilo();
+
+function eatGrass(x, y) {
+  var idStr = 'grass' + x + '-' + y;
+  pilo.body[pilo.length] = {};
+  pilo.body[pilo.length].x = pilo.body[0].x;
+  pilo.body[pilo.length].y = pilo.body[0].y;
+  pilo.length++;
+  gameBoard.grass[x][y] = 0;
+  document.getElementById(idStr).remove();
+  gameBoard.grasscount--;
+  document.getElementById('score').innerHTML = pilo.length;
+}
+
+setInterval(function growGrass() {
+  var randX,
+    randY;
+  if (gameBoard.grasscount < 500) {
+    randX = Math.floor((Math.random() * (gameBoard.size / player.size)));
+    randY = Math.floor((Math.random() * (gameBoard.size / player.size)));
+    gameBoard.grass[randX][randY] = 1;
+    var style = 'background-color: ' + 'green' + ';';
+    style += 'display: inline-block;';
+    style += 'position: absolute;';
+    style += 'width: ' + player.size + 'px;';
+    style += 'height: ' + player.size + 'px;';
+    style += 'margin-left: ' + (randX * player.size) + 'px;';
+    style += 'margin-top: ' + (randY * player.size) + 'px;';
+    style += 'border-radius: 50%;';
+    gameBoard.div = document.createElement('div');
+    gameBoard.div.setAttribute('id', 'grass' + randX + '-' + randY);
+    gameBoard.div.style.cssText = style;
+    document.getElementById('gameBoard').appendChild(gameBoard.div);
+    gameBoard.grasscount++;
+    console.log(grasscount);
+  }
+}, 50);
