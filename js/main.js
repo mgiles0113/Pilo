@@ -1,23 +1,25 @@
+//"use strict";
+
 /******************************************************************************
- *                                 SETUP                                      *
+ *                              OBJECT SETUP                                  *
  ******************************************************************************
- *  SUMMARY:                                                                  *
- *                                                                            *
- *                                                                            *
+ *  SUMMARY: Establish main objects and initialize attributes for those       *
+ *    objects.                                                                *
  ******************************************************************************
- *  EVENTS:                                                                   *
- *                                                                            *
- *                                                                            *
+ *  EVENTS: none                                                              *
  ******************************************************************************
- *  FUNCTIONS:                                                                *
- *                                                                            *
- *                                                                            *
+ *  FUNCTIONS: none                                                           *
+ ******************************************************************************
+ *  OBJECTS:                                                                  *
+ *    gameBoard - Establish primary grid for the playing area.                *
+ *    player - primary player that has a position and size.                   *
+ *    pilo - primary familiar with positions, size, and movement vector.      *
  *****************************************************************************/
 // create global objects and variable
-var gameBoard = Object(),
-    player = Object(),
-    pilo = Object(),
-    keys = [];
+var gameBoard = {},
+  player = {},
+  pilo = {},
+  keys = [];
 
 // gameboard settings
 gameBoard.size = 900;
@@ -36,31 +38,22 @@ document.getElementsByTagName("body")[0].appendChild(gameBoard.div);
 // player settings
 player.size = 5;
 player.color = 'white';
-player.pos = Object();
+player.pos = {};
 player.pos.x = 0;
 player.pos.y = 0;
-// place initial player
-showPlayer();
 // pilo settings
 pilo.size = 5;
 pilo.color = 'aqua';
-pilo.pos = Object();
+pilo.pos = {};
 pilo.pos.x = 20;
 pilo.pos.y = 20;
 pilo.speed = 50;
 pilo.moveVec = genRandMoveVector();
-showPilo();
-autoMovePilo();
-
-
-
 
 /******************************************************************************
  *                                   PILO                                     *
  ******************************************************************************
- *  SUMMARY:                                                                  *
- *                                                                            *
- *                                                                            *
+ *  SUMMARY: Pilo is the primary familiar in the game. He begins with a       *
  ******************************************************************************
  *  EVENTS:                                                                   *
  *    setInterval - performs action based on time.                            *
@@ -81,8 +74,10 @@ autoMovePilo();
 function autoMovePilo() {
   pilo.moveVec = genRandMoveVector();
   console.log(pilo.moveVec.distance);
-  pilo.autoMove = setInterval(function() {movePilo(pilo.moveVec.direction)}, pilo.speed);
-  pilo.changeDirection = setTimeout(function(){
+  pilo.autoMove = setInterval(function () {
+    movePilo(pilo.moveVec.direction);
+  }, pilo.speed);
+  pilo.changeDirection = setTimeout(function () {
     clearInterval(pilo.autoMove);
     autoMovePilo();
   }, (pilo.speed * pilo.moveVec.distance));
@@ -94,6 +89,7 @@ function autoMovePilo() {
   parameters: none
 ******************************************************************************/
 function showPilo() {
+  var style;
   style = 'background-color: ' + pilo.color + ';';
   style += 'display: inline-block;';
   style += 'position: absolute;';
@@ -106,7 +102,7 @@ function showPilo() {
   pilo.div.setAttribute('id', 'pilo');
   pilo.div.style.cssText = style;
   document.getElementById('gameBoard').appendChild(pilo.div);
-};
+}
 
 /******************************************************************************
   name: removePilo()
@@ -115,7 +111,7 @@ function showPilo() {
 ******************************************************************************/
 function removePilo() {
   document.getElementById('pilo').remove();
-};
+}
 
 /****************************************************************************** 
   name: movePilo(d)
@@ -124,54 +120,47 @@ function removePilo() {
     d - direction that will be translated to changes in position x and y.
 ******************************************************************************/
 function movePilo(d) {
-  if (d == 'dr') {
+  if (d === 'dr') {
     if (pilo.pos.x < (gameBoard.size - pilo.size)) {
       pilo.pos.x += pilo.size;
     }
     if (pilo.pos.y < (gameBoard.size - pilo.size)) {
       pilo.pos.y += pilo.size;
     }
-  }
-  else if (d == 'ur') {
+  } else if (d === 'ur') {
     if (pilo.pos.x < (gameBoard.size - pilo.size)) {
       pilo.pos.x += pilo.size;
     }
     if (pilo.pos.y >= pilo.size) {
       pilo.pos.y -= pilo.size;
     }
-  }
-  else if (d == 'dl') {
+  } else if (d === 'dl') {
     if (pilo.pos.y < (gameBoard.size - pilo.size)) {
       pilo.pos.y += pilo.size;
     }
     if (pilo.pos.x >= pilo.size) {
       pilo.pos.x -= pilo.size;
     }
-  }
-  else if (d == 'ul') {
+  } else if (d === 'ul') {
     if (pilo.pos.x >= pilo.size) {
       pilo.pos.x -= pilo.size;
     }
     if (pilo.pos.y >= pilo.size) {
       pilo.pos.y -= pilo.size;
     }
-  }
-  else if (d == 'l') {
+  } else if (d === 'l') {
     if (pilo.pos.x >= pilo.size) {
       pilo.pos.x -= pilo.size;
     }
-  }
-  else if (d == 'u') {
+  } else if (d === 'u') {
     if (pilo.pos.y >= pilo.size) {
       pilo.pos.y -= pilo.size;
     }
-  }
-  else if (d == 'r') {
+  } else if (d === 'r') {
     if (pilo.pos.x < (gameBoard.size - pilo.size)) {
       pilo.pos.x += pilo.size;
     }
-  }
-  else if (d == 'd') {
+  } else if (d === 'd') {
     if (pilo.pos.y < (gameBoard.size - pilo.size)) {
       pilo.pos.y += pilo.size;
     }
@@ -180,14 +169,12 @@ function movePilo(d) {
   removePilo();
   // add player in new position
   showPilo();
-};
+}
 
 /******************************************************************************
  *                                  PLAYER                                    *
  ******************************************************************************
- *  SUMMARY:                                                                  *
- *                                                                            *
- *                                                                            *
+ *  SUMMARY: Primary player character, conrolled by keyboard.                 *
  ******************************************************************************
  *  EVENTS:                                                                   *
  *    keydown - detects when a key is pressed.                                *
@@ -202,7 +189,6 @@ function movePilo(d) {
  *    removePlayer() - remove player from view, place in new position.        *
  *    showPlayer() - displays the player with given parameters.               *
  *****************************************************************************/
-
 // Detect arrow key down
 window.addEventListener("keydown", keysPressed, false);
 // Detect arrow key up
@@ -220,36 +206,22 @@ function keysPressed(e) {
   // down and right arrows are pressed simultaneously
   if (keys[39] && keys[40]) {
     movePlayer('dr');
-  }
-  // up and right arrows are pressed simultaneously
-  else if (keys[38] && keys[39]) {
+  } else if (keys[38] && keys[39]) {
     movePlayer('ur');
-  }
-  // up and left arrows are pressed simultaneously
-  else if (keys[37] && keys[38]) {
+  } else if (keys[37] && keys[38]) {
     movePlayer('ul');
-  }
-  // down and left arrows are pressed simultaneously
-  else if (keys[37] && keys[40]) {
+  } else if (keys[37] && keys[40]) {
     movePlayer('dl');
-  }
-  // left arrow is pressed
-  else if (keys[37]) {
+  } else if (keys[37]) {
     movePlayer('l');
-  }
-  // up arrow is pressed
-  else if (keys[38]) {
+  } else if (keys[38]) {
     movePlayer('u');
-  }
-  // right arrow is pressed
-  else if (keys[39]) {
+  } else if (keys[39]) {
     movePlayer('r');
-  }
-  // down arrow is pressed
-  else if (keys[40]) {
+  } else if (keys[40]) {
     movePlayer('d');
   }
-};
+}
 
 /****************************************************************************** 
   name: keysReleased(e)
@@ -259,7 +231,7 @@ function keysPressed(e) {
 ******************************************************************************/
 function keysReleased(e) {
   keys[e.keyCode] = false;
-};
+}
 
 /****************************************************************************** 
   name: showPlayer()
@@ -267,7 +239,7 @@ function keysReleased(e) {
   parameters: none
 ******************************************************************************/
 function showPlayer() {
-  style = 'background-color: ' + player.color + ';';
+  var style = 'background-color: ' + player.color + ';';
   style += 'display: inline-block;';
   style += 'position: absolute;';
   style += 'width: ' + player.size + 'px;';
@@ -279,7 +251,7 @@ function showPlayer() {
   player.div.setAttribute('id', 'player');
   player.div.style.cssText = style;
   document.getElementById('gameBoard').appendChild(player.div);
-};
+}
 
 /****************************************************************************** 
   name: removePlayer()
@@ -288,7 +260,7 @@ function showPlayer() {
 ******************************************************************************/
 function removePlayer() {
   document.getElementById('player').remove();
-};
+}
 
 /****************************************************************************** 
   name: movePlayer(d)
@@ -297,54 +269,47 @@ function removePlayer() {
     d - direction that will be translated to changes in position x and y.
 ******************************************************************************/
 function movePlayer(d) {
-  if (d == 'dr') {
+  if (d === 'dr') {
     if (player.pos.x < (gameBoard.size - player.size)) {
       player.pos.x += player.size;
     }
     if (player.pos.y < (gameBoard.size - player.size)) {
       player.pos.y += player.size;
     }
-  }
-  else if (d == 'ur') {
+  } else if (d === 'ur') {
     if (player.pos.x < (gameBoard.size - player.size)) {
       player.pos.x += player.size;
     }
     if (player.pos.y >= player.size) {
       player.pos.y -= player.size;
     }
-  }
-  else if (d == 'dl') {
+  } else if (d === 'dl') {
     if (player.pos.y < (gameBoard.size - player.size)) {
       player.pos.y += player.size;
     }
     if (player.pos.x >= player.size) {
       player.pos.x -= player.size;
     }
-  }
-  else if (d == 'ul') {
+  } else if (d === 'ul') {
     if (player.pos.x >= player.size) {
       player.pos.x -= player.size;
     }
     if (player.pos.y >= player.size) {
       player.pos.y -= player.size;
     }
-  }
-  else if (d == 'l') {
+  } else if (d === 'l') {
     if (player.pos.x >= player.size) {
       player.pos.x -= player.size;
     }
-  }
-  else if (d == 'u') {
+  } else if (d === 'u') {
     if (player.pos.y >= player.size) {
       player.pos.y -= player.size;
     }
-  }
-  else if (d == 'r') {
+  } else if (d === 'r') {
     if (player.pos.x < (gameBoard.size - player.size)) {
       player.pos.x += player.size;
     }
-  }
-  else if (d == 'd') {
+  } else if (d === 'd') {
     if (player.pos.y < (gameBoard.size - player.size)) {
       player.pos.y += player.size;
     }
@@ -353,48 +318,53 @@ function movePlayer(d) {
   removePlayer();
   // add player in new position
   showPlayer();
-};
+}
 
 /******************************************************************************
  *                                  GENERAL                                   *
  ******************************************************************************
- *  SUMMARY:                                                                  *
- *                                                                            *
- *                                                                            *
+ *  SUMMARY: General actions that can be called by multiple objects/functions *
  ******************************************************************************
- *  EVENTS:                                                                   *
+ *  EVENTS: none                                                              *
  ******************************************************************************
  *  FUNCTIONS:                                                                *
  *    genRandMoveVector() - return random movement of distance and direction. *
  *****************************************************************************/
+
+/****************************************************************************** 
+  name: genRandMoveVector()
+  description: Creates a vector object and returns it with randomly generated
+    distance and direction.
+  parameters: none
+******************************************************************************/
 function genRandMoveVector() {
-  var randMoveVector = Object();
+  var randMoveVector = {};
   randMoveVector.direction = Math.floor((Math.random() * 8) + 1);
   randMoveVector.distance = Math.floor((Math.random() * 30) + 1);
   
-  if (randMoveVector.direction == 1) {
+  if (randMoveVector.direction === 1) {
     randMoveVector.direction = 'ul';
-  }
-  else if (randMoveVector.direction == 2) {
+  } else if (randMoveVector.direction === 2) {
     randMoveVector.direction = 'u';
-  }
-  else if (randMoveVector.direction == 3) {
+  } else if (randMoveVector.direction === 3) {
     randMoveVector.direction = 'ur';
-  }
-  else if (randMoveVector.direction == 4) {
+  } else if (randMoveVector.direction === 4) {
     randMoveVector.direction = 'r';
-  }
-  else if (randMoveVector.direction == 5) {
+  } else if (randMoveVector.direction === 5) {
     randMoveVector.direction = 'dr';
-  }
-  else if (randMoveVector.direction == 6) {
+  } else if (randMoveVector.direction === 6) {
     randMoveVector.direction = 'd';
-  }
-  else if (randMoveVector.direction == 7) {
+  } else if (randMoveVector.direction === 7) {
     randMoveVector.direction = 'dl';
-  }
-  else if (randMoveVector.direction == 8) {
+  } else if (randMoveVector.direction === 8) {
     randMoveVector.direction = 'l';
   }
   return randMoveVector;
 }
+
+// place initial player
+showPlayer();
+// place initial pilo
+showPilo();
+// start pilo movement
+autoMovePilo();
