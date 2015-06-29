@@ -432,6 +432,7 @@ function eatGrass(x, y) {
   document.getElementById(idStr).remove();
   gameBoard.grasscount--;
   document.getElementById('score').innerHTML = pilo.length;
+  console.log(gameBoard.grasscount);
 }
 
 setInterval(function growGrass() {
@@ -454,6 +455,6 @@ setInterval(function growGrass() {
     gameBoard.div.style.cssText = style;
     document.getElementById('gameBoard').appendChild(gameBoard.div);
     gameBoard.grasscount++;
-    console.log(grasscount);
+    console.log(gameBoard.grasscount);
   }
 }, 50);
